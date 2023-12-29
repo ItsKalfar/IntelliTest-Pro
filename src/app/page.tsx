@@ -1,10 +1,14 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Link from "next/link";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs";
 import { buttonVariants } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  const { userId } = await auth();
+  const isAuth = !!userId;
+
   return (
     <>
       <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center">
@@ -20,16 +24,25 @@ export default function Home() {
           Transform PDFs into Smart Exams with IntelliTestPro&apos;s AI-Powered
           Generation for Tailored Assessments and Enhanced Learning Journeys.
         </p>
-        <Link
-          href="/dashboard"
-          target="_blank"
-          className={buttonVariants({
-            size: "lg",
-            className: "mt-5",
-          })}
-        >
-          Get started <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
+        {isAuth ? (
+          <Link
+            href="/chat"
+            className={buttonVariants({
+              className: "mt-6",
+            })}
+          >
+            Go to Chats <ArrowRight className="ml-1.5 h-5 w-5" />
+          </Link>
+        ) : (
+          <Link
+            href="/sign-up"
+            className={buttonVariants({
+              className: "mt-6",
+            })}
+          >
+            Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+          </Link>
+        )}
       </MaxWidthWrapper>
       <div>
         <div className="relative isolate">
