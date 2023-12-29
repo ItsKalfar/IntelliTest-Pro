@@ -1,4 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import UploadButton from "@/components/UploadButton";
 import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs";
@@ -43,6 +44,7 @@ export default async function Home() {
             Get started <ArrowRight className="ml-1.5 h-5 w-5" />
           </Link>
         )}
+        <UploadButton />
       </MaxWidthWrapper>
       <div>
         <div className="relative isolate">
