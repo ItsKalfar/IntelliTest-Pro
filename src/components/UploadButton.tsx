@@ -33,20 +33,21 @@ const FileUpload = () => {
     return interval;
   };
 
-  // const { mutate } = useMutation({
-  //   mutationFn: async (
-  //     files: Array<{ file_key: string; file_name: string }>
-  //   ) => {
-  //     const response = await axios.post("/api/create-chat", { files });
-  //     return response.data;
-  //   },
-  // });
+  const { mutate } = useMutation({
+    mutationFn: async (
+      files: Array<{ file_key: string; file_name: string }>
+    ) => {
+      const response = await axios.post("/api/create-chat", { files });
+      return response.data;
+    },
+  });
 
   return (
     <Dropzone
       accept={{ "application/pdf": [".pdf"] }}
       maxFiles={5}
       onDrop={async (acceptedFiles) => {
+        let uploadedFiles = [];
         const progressInterval = startSimulatedProgress();
         const uploadPromises = acceptedFiles.map(async (file) => {
           if (file.size > 10 * 1024 * 1024) {
@@ -60,6 +61,11 @@ const FileUpload = () => {
               toast.error("Something went wrong");
               return;
             }
+
+            uploadedFiles.push({
+              file_key: data.file_key,
+              file_name: data.file_name,
+            });
           } catch (error: any) {
             toast.error(error);
           } finally {
