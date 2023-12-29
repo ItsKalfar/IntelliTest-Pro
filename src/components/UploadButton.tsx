@@ -47,7 +47,7 @@ const FileUpload = () => {
       accept={{ "application/pdf": [".pdf"] }}
       maxFiles={5}
       onDrop={async (acceptedFiles) => {
-        let uploadedFiles = [];
+        let uploadedFiles: { file_key: string; file_name: string }[] = [];
         const progressInterval = startSimulatedProgress();
         const uploadPromises = acceptedFiles.map(async (file) => {
           if (file.size > 10 * 1024 * 1024) {
@@ -70,10 +70,23 @@ const FileUpload = () => {
             toast.error(error);
           } finally {
             setUploading(false);
+            clearInterval(progressInterval);
+            setUploadProgress(100);
           }
         });
-        clearInterval(progressInterval);
-        setUploadProgress(100);
+
+        Promise.all(uploadPromises).then(() => {
+          mutate(uploadedFiles, {
+            onSuccess: ({ chat_id }) => {
+              toast.success("Chat created!");
+              router.push(`/chat/${chat_id}`);
+            },
+            onError: (err) => {
+              toast.error("Error creating chat");
+              console.error(err);
+            },
+          });
+        });
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
