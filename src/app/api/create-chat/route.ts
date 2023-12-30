@@ -3,6 +3,7 @@ import { chats } from "@/lib/db/schema";
 import { getS3Url } from "@/lib/s3";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+import { loadS3IntoPinecone } from "@/lib/pinecone";
 
 export async function POST(req: Request, res: Response) {
   const { userId } = await auth();
@@ -20,7 +21,7 @@ export async function POST(req: Request, res: Response) {
 
     // Processing each file in the array
     for (const { file_key, file_name } of files) {
-      console.log(file_key, file_name);
+      await loadS3IntoPinecone(file_key);
 
       // Accumulate information for each PDF
       pdfNames.push(file_name);

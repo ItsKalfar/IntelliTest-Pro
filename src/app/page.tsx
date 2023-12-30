@@ -26,14 +26,17 @@ export default async function Home() {
           Generation for Tailored Assessments and Enhanced Learning Journeys.
         </p>
         {isAuth ? (
-          <Link
-            href="/chat"
-            className={buttonVariants({
-              className: "mt-6",
-            })}
-          >
-            Go to Chats <ArrowRight className="ml-1.5 h-5 w-5" />
-          </Link>
+          <div className="flex items-center justify-center mt-6">
+            <Link
+              href="/chat"
+              className={buttonVariants({
+                className: "mr-2",
+              })}
+            >
+              Go to Chats <ArrowRight className="ml-1.5 h-5 w-5" />
+            </Link>
+            <UploadButton className="ml-2" />
+          </div>
         ) : (
           <Link
             href="/sign-up"
@@ -44,7 +47,6 @@ export default async function Home() {
             Get started <ArrowRight className="ml-1.5 h-5 w-5" />
           </Link>
         )}
-        <UploadButton />
       </MaxWidthWrapper>
       <div>
         <div className="relative isolate">

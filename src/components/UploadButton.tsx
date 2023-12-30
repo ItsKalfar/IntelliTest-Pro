@@ -33,12 +33,20 @@ const FileUpload = () => {
     return interval;
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (
       files: Array<{ file_key: string; file_name: string }>
     ) => {
       const response = await axios.post("/api/create-chat", { files });
       return response.data;
+    },
+    onSuccess: ({ chat_id }) => {
+      toast.success("Chat created!");
+      router.push(`/chat/${chat_id}`);
+    },
+    onError: (err) => {
+      toast.error("Error creating chat");
+      console.error(err);
     },
   });
 
@@ -76,16 +84,7 @@ const FileUpload = () => {
         });
 
         Promise.all(uploadPromises).then(() => {
-          mutate(uploadedFiles, {
-            onSuccess: ({ chat_id }) => {
-              toast.success("Chat created!");
-              router.push(`/chat/${chat_id}`);
-            },
-            onError: (err) => {
-              toast.error("Error creating chat");
-              console.error(err);
-            },
-          });
+          mutate(uploadedFiles);
         });
       }}
     >
@@ -114,7 +113,7 @@ const FileUpload = () => {
                   </div>
                 </div>
               ) : null}
-              {uploading ? (
+              {uploading || isPending ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <Progress
                     value={uploadProgress}
@@ -142,7 +141,7 @@ const FileUpload = () => {
   );
 };
 
-const UploadButton = () => {
+const UploadButton = ({ className }: { className?: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Dialog
@@ -154,7 +153,7 @@ const UploadButton = () => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button>
+        <Button className={className}>
           Upload PDF <File className="ml-2 mt-0.5 h-4 w-4" />{" "}
         </Button>
       </DialogTrigger>
