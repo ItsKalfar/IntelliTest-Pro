@@ -141,7 +141,13 @@ const FileUpload = () => {
   );
 };
 
-const UploadButton = ({ className }: { className?: string }) => {
+const UploadButton = ({
+  className,
+  buttonText,
+}: {
+  className?: string;
+  buttonText: string;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <Dialog
@@ -154,7 +160,7 @@ const UploadButton = ({ className }: { className?: string }) => {
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
         <Button className={className}>
-          Upload PDF <File className="ml-2 mt-0.5 h-4 w-4" />{" "}
+          {buttonText} <File className="ml-2 mt-0.5 h-4 w-4" />{" "}
         </Button>
       </DialogTrigger>
 

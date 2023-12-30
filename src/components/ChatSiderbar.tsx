@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { MessageCircle, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import UploadButton from "./UploadButton";
 
 const ChatSiderbar = ({
   chats,
@@ -20,6 +21,10 @@ const ChatSiderbar = ({
           New Chat
         </Button>
       </Link>
+      <UploadButton
+        className="w-full border-white border"
+        buttonText="New Chat"
+      />
 
       <div className="flex max-h-screen overflow-scroll pb-20 flex-col gap-2 mt-4">
         {chats.map((chat) => (

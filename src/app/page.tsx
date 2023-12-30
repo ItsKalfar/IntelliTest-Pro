@@ -35,7 +35,7 @@ export default async function Home() {
             >
               Go to Chats <ArrowRight className="ml-1.5 h-5 w-5" />
             </Link>
-            <UploadButton className="ml-2" />
+            <UploadButton className="ml-2" buttonText="Upload PDF" />
           </div>
         ) : (
           <Link
