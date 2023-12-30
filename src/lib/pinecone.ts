@@ -32,6 +32,7 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
 
 // Function to prepare a document for embedding
 async function prepareDocument(page: PDFPage) {
+  console.log("Preparing document");
   // Extract relevant information from the PDF page
   let { pageContent, metadata } = page;
 
@@ -48,12 +49,14 @@ async function prepareDocument(page: PDFPage) {
       },
     }),
   ]);
+  console.log("Prepared document");
   return docs;
 }
 
 // Function to embed a document and create a Pinecone record
 async function embedDocument(doc: Document) {
   try {
+    console.log("Obtaining embeddings");
     // Obtain embeddings for the document's page content
     const embeddings = await getEmbeddings(doc.pageContent);
     // Create a hash for the document's page content
@@ -99,5 +102,6 @@ export async function loadS3IntoPinecone(fileKeys: string[]) {
     const namespace = pineconeIndex.namespace(convertToAscii(fileKey));
     // Upsert vectors into the namespace
     await namespace.upsert(vectors);
+    console.log("Uploaded vectors");
   }
 }

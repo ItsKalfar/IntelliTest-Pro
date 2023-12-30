@@ -14,6 +14,8 @@ export async function POST(req: Request, res: Response) {
     const body = await req.json();
     const { files } = body;
 
+    console.log("Received files");
+
     // Initialize arrays to store information for all PDFs
     const pdfNames = [];
     const pdfUrls = [];
@@ -21,7 +23,9 @@ export async function POST(req: Request, res: Response) {
 
     // Processing each file in the array
     for (const { file_key, file_name } of files) {
+      console.log("Loading files into Pinecone");
       await loadS3IntoPinecone(file_key);
+      console.log("Loaded data into Pinecone");
 
       // Accumulate information for each PDF
       pdfNames.push(file_name);
@@ -29,6 +33,7 @@ export async function POST(req: Request, res: Response) {
       fileKeys.push(file_key);
     }
 
+    console.log("Creating chat...");
     // Insert accumulated information into the database
     const chatId = await db
       .insert(chats)
@@ -42,17 +47,15 @@ export async function POST(req: Request, res: Response) {
         insertedId: chats.id,
       });
 
+    console.log("Chat created successfully...");
     return NextResponse.json(
       {
         chat_id: chatId[0].insertedId,
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    return NextResponse.json(
-      { error: "internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
