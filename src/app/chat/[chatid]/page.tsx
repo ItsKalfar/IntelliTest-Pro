@@ -8,7 +8,13 @@ import ChatSiderbar from "@/components/ChatSiderbar";
 import ChatComponent from "@/components/ChatComponent";
 import PDFViewer from "@/components/PDFViewer";
 
-const Page = async ({ chatId }: { chatId: string }) => {
+type Props = {
+  params: {
+    chatId: string;
+  };
+};
+
+const Page = async ({ params: { chatId } }: Props) => {
   const { userId } = await auth();
   if (!userId) {
     return redirect("/sign-in");
