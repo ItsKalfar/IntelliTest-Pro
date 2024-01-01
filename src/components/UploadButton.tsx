@@ -42,7 +42,8 @@ const FileUpload = () => {
     },
     onSuccess: ({ chat_id }) => {
       toast.success("Chat created!");
-      router.push(`/chat/${chat_id}`);
+      const chatId: string = chat_id!;
+      router.push(`/chat/${chatId}`);
     },
     onError: (err) => {
       toast.error("Error creating chat");
@@ -159,7 +160,7 @@ const UploadButton = ({
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button className={className}>
+        <Button className={className} variant={"outline"}>
           {buttonText} <File className="ml-2 mt-0.5 h-4 w-4" />{" "}
         </Button>
       </DialogTrigger>

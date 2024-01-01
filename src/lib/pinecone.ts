@@ -1,7 +1,8 @@
 import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
 import { downloadFromS3 } from "./s3-server";
 import { convertToAscii } from "./utils";
-import { getEmbeddings } from "./embeddings";
+// import { getEmbeddings } from "./OpenAI-embeddings";
+import { getEmbeddingsFromHF } from "./HF-embeddings";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import md5 from "md5";
 import {
@@ -32,7 +33,6 @@ export const truncateStringByBytes = (str: string, bytes: number) => {
 
 // Function to prepare a document for embedding
 async function prepareDocument(page: PDFPage) {
-  console.log("Preparing document");
   // Extract relevant information from the PDF page
   let { pageContent, metadata } = page;
 
@@ -49,16 +49,15 @@ async function prepareDocument(page: PDFPage) {
       },
     }),
   ]);
-  console.log("Prepared document");
+
   return docs;
 }
 
 // Function to embed a document and create a Pinecone record
 async function embedDocument(doc: Document) {
   try {
-    console.log("Obtaining embeddings");
     // Obtain embeddings for the document's page content
-    const embeddings = await getEmbeddings(doc.pageContent);
+    const embeddings = await getEmbeddingsFromHF(doc.pageContent);
     // Create a hash for the document's page content
     const hash = md5(doc.pageContent);
 
@@ -78,30 +77,28 @@ async function embedDocument(doc: Document) {
 }
 
 // Function to load PDFs from S3, extract text, segment, vectorize, and upload to Pinecone
-export async function loadS3IntoPinecone(fileKeys: string[]) {
+export async function loadS3IntoPinecone(fileKey: string) {
   // 1. obtain the pdfs -> downlaod and read from pdfs
-  for (const fileKey of fileKeys) {
-    const file_name = await downloadFromS3(fileKey);
-    if (!file_name) {
-      throw new Error("could not download from s3");
-    }
 
-    // Getting the text from the downlaoded pdf
-    const loader = new PDFLoader(file_name);
-    const pages = (await loader.load()) as PDFPage[];
-
-    // 2. split and segment the pdf
-    const documents = await Promise.all(pages.map(prepareDocument));
-    // 3. vectorise and embed individual documents
-    const vectors = await Promise.all(documents.flat().map(embedDocument));
-
-    const client = await getPineconeClient();
-    const pineconeIndex = client.index(process.env.PINECONE_INDEX_NAME!);
-
-    // Use the file key to create a namespace within the index
-    const namespace = pineconeIndex.namespace(convertToAscii(fileKey));
-    // Upsert vectors into the namespace
-    await namespace.upsert(vectors);
-    console.log("Uploaded vectors");
+  const file_name = await downloadFromS3(fileKey);
+  if (!file_name) {
+    throw new Error("could not download from s3");
   }
+
+  // Getting the text from the downlaoded pdf
+  const loader = new PDFLoader(file_name);
+  const pages = (await loader.load()) as PDFPage[];
+
+  // 2. split and segment the pdf
+  const documents = await Promise.all(pages.map(prepareDocument));
+  // 3. vectorise and embed individual documents
+  const vectors = await Promise.all(documents.flat().map(embedDocument));
+
+  const client = await getPineconeClient();
+  const pineconeIndex = client.index(process.env.PINECONE_INDEX_NAME!);
+
+  // Use the file key to create a namespace within the index
+  const namespace = pineconeIndex.namespace(convertToAscii(fileKey));
+  // Upsert vectors into the namespace
+  await namespace.upsert(vectors);
 }

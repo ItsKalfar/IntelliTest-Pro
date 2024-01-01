@@ -26,17 +26,7 @@ export default async function Home() {
           Generation for Tailored Assessments and Enhanced Learning Journeys.
         </p>
         {isAuth ? (
-          <div className="flex items-center justify-center mt-6">
-            <Link
-              href="/chat"
-              className={buttonVariants({
-                className: "mr-2",
-              })}
-            >
-              Go to Chats <ArrowRight className="ml-1.5 h-5 w-5" />
-            </Link>
-            <UploadButton className="ml-2" buttonText="Upload PDF" />
-          </div>
+          <UploadButton className="mt-6" buttonText="Upload PDF" />
         ) : (
           <Link
             href="/sign-up"

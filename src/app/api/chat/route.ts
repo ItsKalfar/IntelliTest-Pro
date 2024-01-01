@@ -1,17 +1,14 @@
-import { Configuration, OpenAIApi } from "openai-edge";
-import { Message, OpenAIStream, StreamingTextResponse } from "ai";
+import { HfInference } from "@huggingface/inference";
+import { HuggingFaceStream, StreamingTextResponse } from "ai";
 import { getContext } from "@/lib/context";
 import { db } from "@/lib/db";
 import { chats, messages as _messages } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
+const Hf = new HfInference(process.env.HF_API_KEY);
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(config);
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
@@ -33,34 +30,23 @@ export async function POST(req: Request) {
     // Join all contexts into a single string
     const allContexts = contexts.join("\n");
 
-    const prompt = {
-      role: "system",
-      content: `AI assistant is a brand new, powerful, human-like artificial intelligence.
-        The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-        AI is a well-behaved and well-mannered individual.
-        AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.
-        AI has the sum of all knowledge in their brain, and is able to accurately answer nearly any question about any topic in conversation.
-        AI assistant is a big fan of Pinecone and Vercel.
-        START CONTEXT BLOCK
-        ${allContexts}
-        END OF CONTEXT BLOCK
-        AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-        If the context does not provide the answer to question, the AI assistant will say, "I'm sorry, but I don't know the answer to that question".
-        AI assistant will not apologize for previous responses, but instead will indicated new information was gained.
-        AI assistant will not invent anything that is not drawn directly from the context.
-        `,
-    };
+    const userMessages = messages.filter(
+      (message: any) => message.role === "user"
+    );
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        prompt,
-        ...messages.filter((message: Message) => message.role === "user"),
-      ],
-      stream: true,
+    const question = userMessages[userMessages.length - 1].content;
+
+    const prompt = `
+      Document:  ${allContexts}. Now from above document, please answer the following question or perform the given task: ${question} 
+      `;
+
+    const response = await Hf.textGenerationStream({
+      model: "google/flan-t5-xxl",
+      // model: "mistralai/Mistral-7B-v0.1",
+      inputs: prompt,
     });
 
-    const stream = OpenAIStream(response, {
+    const stream = HuggingFaceStream(response, {
       onStart: async () => {
         // save user message into db
         await db.insert(_messages).values({

@@ -1,6 +1,7 @@
 import { Pinecone } from "@pinecone-database/pinecone";
 import { convertToAscii } from "./utils";
-import { getEmbeddings } from "./embeddings";
+// import { getEmbeddings } from "./OpenAI-embeddings";
+import { getEmbeddingsFromHF } from "./HF-embeddings";
 
 export async function getMatchesFromEmbeddings(
   embeddings: number[],
@@ -26,7 +27,7 @@ export async function getMatchesFromEmbeddings(
 }
 
 export async function getContext(query: string, fileKey: string) {
-  const queryEmbeddings = await getEmbeddings(query);
+  const queryEmbeddings = await getEmbeddingsFromHF(query);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, fileKey);
 
   const qualifyingDocs = matches.filter(
