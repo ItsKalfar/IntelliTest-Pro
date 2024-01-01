@@ -22,15 +22,6 @@ const Navbar = async () => {
             {!isAuth ? (
               <>
                 <Link
-                  href="/pricing"
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Pricing
-                </Link>
-                <Link
                   href="/sign-in"
                   className={buttonVariants({
                     variant: "ghost",
@@ -45,7 +36,7 @@ const Navbar = async () => {
                     size: "sm",
                   })}
                 >
-                  Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+                  Sign Up <ArrowRight className="ml-1.5 h-5 w-5" />
                 </Link>
               </>
             ) : (
