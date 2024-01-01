@@ -48,8 +48,8 @@ const MessageList = ({ chatId }: { chatId: number }) => {
   }
   if (!messages || messages.length === 0)
     return (
-      <div className="border border-black flex item-center justify-center h-screen w-full">
-        <p>Start Chatting...</p>
+      <div className="flex flex-col items-center text-center justify-center h-[70vh] w-full">
+        <p>Start Chatting</p>
       </div>
     );
   return (

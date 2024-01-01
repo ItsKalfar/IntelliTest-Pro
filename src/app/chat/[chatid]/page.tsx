@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import UploadButton from "@/components/UploadButton";
 import Link from "next/link";
-import { MessageCircle, MoveLeft, MoveRight } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -33,7 +33,7 @@ const Page = async ({ params: { chatId } }: Props) => {
   const currentChat = _chats.find((chat) => chat.id === parseInt(chatId));
 
   return (
-    <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0">
+    <div className="w-full justify-between items-stretch h-[90vh] flex flex-shrink-0">
       <div className="w-2/6 relative overflow-y-auto">
         <div className="px-2 py-[12px] flex items-center justify-between">
           <UploadButton
@@ -63,28 +63,18 @@ const Page = async ({ params: { chatId } }: Props) => {
         </div>
       </div>
       <div className="w-4/6 flex flex-col item-center">
-        <div className="px-2 py-[12px] w-full items-center justify-between flex">
-          <Button variant={"outline"} className="border-none shadow-md py-6">
-            <MoveLeft />
-          </Button>
-          <Button variant={"outline"} className="border-none shadow-md py-6">
-            <MoveRight />
-          </Button>
-        </div>
         <iframe
           src={`https://docs.google.com/gview?url=${currentChat?.pdfUrls[0]}&embedded=true`}
-          className="w-full h-[80vh] bg-transparent px-2 bg-white"
+          className="w-full h-[88vh] bg-transparent px-4 py-[12px] my-[12px] bg-white rounded-md shadow-md"
         ></iframe>
       </div>
       <div className="w-2/6" id="message-container">
-        <div className="px-2 py-[12px] w-full">
-          <Button
-            variant={"outline"}
-            className="w-full border-none shadow-md py-6"
-          >
+        <div className="px-2 py-[12px] flex items-center justify-between">
+          <Button className="w-full border-white border py-6 text-black bg-white shadow-md">
             Chat
           </Button>
         </div>
+
         <MessageList chatId={parseInt(chatId)} />
       </div>
     </div>

@@ -45,6 +45,7 @@ export async function POST(req: Request) {
       // model: "mistralai/Mistral-7B-v0.1",
       inputs: prompt,
     });
+    console.log(response);
 
     const stream = HuggingFaceStream(response, {
       onStart: async () => {
