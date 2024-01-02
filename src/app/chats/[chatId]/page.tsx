@@ -45,7 +45,7 @@ const Page = async ({ params: { chatId } }: Props) => {
         <div className="bg-white h-[80vh] rounded-md mx-2 shadow-md  flex max-h-screen overflow-scroll pb-20 flex-col">
           {_chats.map((chat) => (
             <div key={chat.id}>
-              <Link href={`/chat/${chat.id}`}>
+              <Link href={`/chats/${chat.id}`}>
                 <div
                   className={cn("px-3 py-6 flex items-center hover:font-bold", {
                     "bg-gray-100": chat.id === parseInt(chatId),
