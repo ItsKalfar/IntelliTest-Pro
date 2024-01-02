@@ -4,6 +4,10 @@
 
 IntelliTestPro is an innovative project that empowers teachers to interact with their PDF documents through natural language conversations. With the ability to chat with PDFs, teachers can efficiently extract valuable information and streamline their workflow. The project integrates cutting-edge technologies to provide a seamless and intuitive experience.
 
+## Demo Video
+
+https://github.com/ItsKalfar/IntelliTest-Pro/assets/86675223/4d3facef-03a9-4026-bb1d-f66d28f01e02
+
 ## Technologies and Features
 
 - Chat with PDFs: Engage in natural language conversations with your PDF documents, making it easier to extract and understand important information.
